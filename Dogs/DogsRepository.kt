@@ -14,15 +14,22 @@ class DogsRepository private constructor() {
 
     companion object {
 
+        val lock = Any()
         var instance: DogsRepository? = null
 
         fun getInstance(password: String): DogsRepository {
+
             val correctPassword = File("dogs_password.txt").readText().trim()
             if (password != correctPassword) throw IllegalArgumentException("Wrong password")
-            if (instance == null) {
-                instance = DogsRepository()
+
+            instance?.let { return it }
+
+            synchronized(lock) {
+                instance?.let { return it }
+                return DogsRepository().also {
+                    instance = it
+                }
             }
-            return instance!!
         }
     }
 
