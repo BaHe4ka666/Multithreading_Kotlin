@@ -39,8 +39,17 @@ class UserRepository private constructor() {
             критической секции и доступ к ней был только у одного потока. */
 
             synchronized(lock) {
+                /* Если был создан экземпляр репозитория, то возвращаем его */
                 instance?.let { return it }
-                return UserRepository()
+                /* Если экземпляр не был создан, то возвращаем экземпляр репозитория и в блоке also присваиваем
+                переменной instance значение экземпляра класса репозитория */
+
+                return UserRepository().also {
+                    instance = it
+                }
+//                return UserRepository().also {
+//                    instance = it
+//                }
             }
         }
     }
