@@ -1,5 +1,5 @@
 package Observer
 
-interface Observer<T> {
+fun interface Observer<T> {
     fun onChanged(items: T)
 }

@@ -1,6 +1,5 @@
 package User
 
-import Observer.Observer
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.Insets
@@ -29,11 +28,9 @@ class UserDisplay {
         }
 
         /* Регистрация (добавление объекта в коллекцию) наблюдателя, передавая текущий объект. */
-        UserRepository.getInstance("qwerty").registerObserver(object : Observer<List<User>> {
-            override fun onChanged(items: List<User>) {
-                textArea.text = items.joinToString("\n")
-            }
-        })
+        UserRepository.getInstance("qwerty").addOnUserChangedListener { dogs ->
+            textArea.text = dogs.joinToString("\n")
+        }
 
 
     }
