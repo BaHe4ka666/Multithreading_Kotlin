@@ -1,9 +1,10 @@
 package Dogs
 
+import Observer.Observer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
-import javax.swing.text.PasswordView
+
 
 class DogsRepository private constructor() {
 
@@ -13,7 +14,7 @@ class DogsRepository private constructor() {
     val dogs
         get() = _dogs.toList()
 
-    private val observers = mutableListOf<DogsDisplay>()
+    private val observers = mutableListOf<Observer<List<Dog>>>()
 
     private fun loadAllDogs() = Json.decodeFromString<MutableList<Dog>>(file.readText().trim())
 
@@ -23,7 +24,7 @@ class DogsRepository private constructor() {
         }
     }
 
-    fun registerObserver(observer: DogsDisplay) {
+    fun registerObserver(observer: Observer<List<Dog>>) {
         observers.add(observer)
         observer.onChanged(dogs)
     }

@@ -28,7 +28,6 @@ class Administrator {
                     repository.saveChanges()
                     break
                 }
-
                 TypeOfOperation.ADD_NEW_USER -> addNewUser()
                 TypeOfOperation.DELETE_USER -> removeUser()
             }
