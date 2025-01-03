@@ -31,7 +31,5 @@ class UserDisplay {
         UserRepository.getInstance("qwerty").addOnUserChangedListener { dogs ->
             textArea.text = dogs.joinToString("\n")
         }
-
-
     }
 }

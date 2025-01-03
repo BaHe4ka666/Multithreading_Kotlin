@@ -1,6 +1,5 @@
 package Dogs
 
-import Observer.Observer
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.Insets
@@ -26,10 +25,6 @@ class DogsDisplay {
             add(scrollPane)
         }
 
-        DogsRepository.getInstance("qwerty").registerObserver(object : Observer<List<Dog>> {
-            override fun onChanged(dogs: List<Dog>) {
-                 textArea.text = dogs.joinToString("\n")
-            }
-        })
+        DogsRepository.getInstance("qwerty").registerObserver { textArea.text = it.joinToString("\n") }
     }
 }

@@ -1,50 +1,55 @@
 package User
 
+import Observer.Observable
 import Observer.Observer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
-class UserRepository private constructor() {
+class UserRepository private constructor() : Observable<List<User>> {
 
     init {
         println("Repository is created")
     }
 
-    private val file = File("users.json")
-
-    /* Коллекция наблюдателей */
-    private val observers = mutableListOf<Observer<List<User>>>()
-
     private val _users: MutableList<User> = loadAllUsers()
-    val users
-        get() = _users.toList()
 
     private fun loadAllUsers(): MutableList<User> = Json.decodeFromString<MutableList<User>>(file.readText().trim())
 
+    private val file = File("users.json")
 
-    /* Обновление каждого наблюдателя в коллекции */
-    private fun notifyObservers() {
-        for (observer in observers) {
-            observer.onChanged(users)
-        }
+    /* Коллекция наблюдателей */
+    private val _observers = mutableListOf<Observer<List<User>>>()
+
+    override val observers
+        get() = _observers.toList()
+
+    override val currentValue: List<User>
+        get() = _users.toList()
+
+    override fun registerObserver(observer: Observer<List<User>>) {
+        _observers.add(observer)
+        observer.onChanged(currentValue)
+    }
+
+    override fun unregisterObserver(observer: Observer<List<User>>) {
+        _observers.remove(observer)
     }
 
     fun addOnUserChangedListener(observer: Observer<List<User>>) {
-        observers.add(observer)
-        observer.onChanged(users)
+        registerObserver(observer)
     }
 
     fun addUser(name: String, secondName: String, age: Int) {
-        val id = users.maxOf { it.id } + 1
+        val id = currentValue.maxOf { it.id } + 1
         val user = User(id, name, secondName, age)
         _users.add(user)
-        notifyObservers()
+        notifyObserver()
     }
 
     fun removeUser(id: Int) {
         _users.removeIf { it.id == id }
-        notifyObservers()
+        notifyObserver()
     }
 
     fun saveChanges() {
