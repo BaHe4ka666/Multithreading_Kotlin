@@ -28,6 +28,7 @@ class Administrator {
                     repository.saveChanges()
                     break
                 }
+
                 TypeOfOperation.ADD_NEW_USER -> addNewUser()
                 TypeOfOperation.DELETE_USER -> removeUser()
             }
@@ -41,12 +42,14 @@ class Administrator {
         val secondName = readln()
         println("Age: ")
         val age = readln().toInt()
-        repository.addUser(name, secondName, age)
+        UsersInvoker.addCommand {
+            repository.addUser(name, secondName, age)
+        }
     }
 
     fun removeUser() {
         println("Enter user id: ")
         val id = readln().toInt()
-        repository.removeUser(id)
+        UsersInvoker.addCommand { repository.removeUser(id) }
     }
 }

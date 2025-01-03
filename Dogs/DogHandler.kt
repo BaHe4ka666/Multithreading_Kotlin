@@ -24,6 +24,7 @@ class DogHandler {
                     repository.saveChanges()
                     break
                 }
+
                 TypeOfOperation.ADD_NEW_DOG -> addNewDog()
                 TypeOfOperation.DELETE_DOG -> removeDog()
             }
@@ -37,12 +38,16 @@ class DogHandler {
         val name = readln()
         println("Weight: ")
         val weight = readln().toDouble()
-        repository.addDog(breed, name, weight)
+        DogsInvoker.addCommand {
+            repository.addDog(breed, name, weight)
+        }
     }
 
     fun removeDog() {
         println("Enter user id: ")
         val id = readln().toInt()
-        repository.removeDog(id)
+        DogsInvoker.addCommand {
+            repository.removeDog(id)
+        }
     }
 }

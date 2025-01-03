@@ -1,10 +1,13 @@
 package User
 
+import Command.Command
 import Observer.MutableObservable
 import Observer.Observable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.util.concurrent.LinkedBlockingQueue
+import kotlin.concurrent.thread
 
 class UserRepository private constructor() {
 
@@ -26,7 +29,9 @@ class UserRepository private constructor() {
 
     private fun loadAllUsers(): MutableList<User> = Json.decodeFromString<MutableList<User>>(file.readText().trim())
 
+
     fun addUser(name: String, secondName: String, age: Int) {
+        Thread.sleep(10_000)
         val id = usersList.maxOf { it.id } + 1
         val user = User(id, name, secondName, age)
         usersList.add(user)
@@ -35,7 +40,6 @@ class UserRepository private constructor() {
         if (age > oldestUser.currentValue.age) {
             _oldestUser.currentValue = user
         }
-
     }
 
     fun removeUser(id: Int) {
@@ -47,7 +51,6 @@ class UserRepository private constructor() {
         if (newOldest != oldestUser.currentValue) {
             _oldestUser.currentValue = newOldest
         }
-
     }
 
     fun saveChanges() {
