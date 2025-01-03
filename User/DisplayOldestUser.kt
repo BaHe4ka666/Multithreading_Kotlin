@@ -7,7 +7,7 @@ import javax.swing.JFrame
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
-class UserDisplay {
+class DisplayOldestUser {
 
 
     fun show() {
@@ -28,8 +28,8 @@ class UserDisplay {
         }
 
         /* Регистрация (добавление объекта в коллекцию) наблюдателя, передавая текущий объект. */
-        UserRepository.getInstance("qwerty").users.registerObserver { users ->
-            textArea.text = users.joinToString("\n")
+        UserRepository.getInstance("qwerty").oldestUser.registerObserver { user ->
+            textArea.text = "Oldest person is: $user"
         }
     }
 }

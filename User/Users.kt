@@ -2,6 +2,6 @@ package User
 
 fun main() {
     UserDisplay().show()
-    UserDisplay().show()
+    DisplayOldestUser().show()
     Administrator().work()
 }

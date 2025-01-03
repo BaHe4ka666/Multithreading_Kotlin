@@ -1,59 +1,57 @@
 package User
 
+import Observer.MutableObservable
 import Observer.Observable
-import Observer.Observer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 
-class UserRepository private constructor() : Observable<List<User>> {
+class UserRepository private constructor() {
 
     init {
         println("Repository is created")
     }
 
-    private val _users: MutableList<User> = loadAllUsers()
+    private val file = File("users.json")
+
+    private val usersList: MutableList<User> = loadAllUsers()
+
+    private val _users = MutableObservable<List<User>>(usersList.toList())
+    val users: Observable<List<User>>
+        get() = _users
+
+    private val _oldestUser = MutableObservable(usersList.maxBy { it.age })
+    val oldestUser: Observable<User>
+        get() = _oldestUser
 
     private fun loadAllUsers(): MutableList<User> = Json.decodeFromString<MutableList<User>>(file.readText().trim())
 
-    private val file = File("users.json")
-
-    /* Коллекция наблюдателей */
-    private val _observers = mutableListOf<Observer<List<User>>>()
-
-    override val observers
-        get() = _observers.toList()
-
-    override val currentValue: List<User>
-        get() = _users.toList()
-
-    override fun registerObserver(observer: Observer<List<User>>) {
-        _observers.add(observer)
-        observer.onChanged(currentValue)
-    }
-
-    override fun unregisterObserver(observer: Observer<List<User>>) {
-        _observers.remove(observer)
-    }
-
-    fun addOnUserChangedListener(observer: Observer<List<User>>) {
-        registerObserver(observer)
-    }
-
     fun addUser(name: String, secondName: String, age: Int) {
-        val id = currentValue.maxOf { it.id } + 1
+        val id = usersList.maxOf { it.id } + 1
         val user = User(id, name, secondName, age)
-        _users.add(user)
-        notifyObserver()
+        usersList.add(user)
+        _users.currentValue = usersList.toList()
+
+        if (age > oldestUser.currentValue.age) {
+            _oldestUser.currentValue = user
+        }
+
     }
 
     fun removeUser(id: Int) {
-        _users.removeIf { it.id == id }
-        notifyObserver()
+        usersList.removeIf { it.id == id }
+        _users.currentValue = usersList.toList()
+
+        val newOldest = usersList.maxBy { it.age }
+
+        if (newOldest != oldestUser.currentValue) {
+            _oldestUser.currentValue = newOldest
+        }
+
     }
 
     fun saveChanges() {
-        val content = Json.encodeToString(_users)
+        val content = Json.encodeToString(usersList)
         file.writeText(content)
     }
 

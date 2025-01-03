@@ -25,6 +25,8 @@ class DogsDisplay {
             add(scrollPane)
         }
 
-        DogsRepository.getInstance("qwerty").registerObserver { textArea.text = it.joinToString("\n") }
+        DogsRepository.getInstance("qwerty").dogs.registerObserver {
+            textArea.text = it.joinToString("\n")
+        }
     }
 }
