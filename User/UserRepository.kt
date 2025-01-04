@@ -31,7 +31,6 @@ class UserRepository private constructor() {
 
 
     fun addUser(name: String, secondName: String, age: Int) {
-        Thread.sleep(10_000)
         val id = usersList.maxOf { it.id } + 1
         val user = User(id, name, secondName, age)
         usersList.add(user)

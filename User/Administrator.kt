@@ -1,9 +1,5 @@
 package User
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import java.io.File
-
 class Administrator {
 
     val repository = UserRepository.getInstance("qwerty")
@@ -25,7 +21,7 @@ class Administrator {
 
             when (code) {
                 TypeOfOperation.EXIT -> {
-                    repository.saveChanges()
+                    UsersInvoker.addCommand(AdministratorCommands.SaveChanges(repository))
                     break
                 }
 
@@ -42,14 +38,12 @@ class Administrator {
         val secondName = readln()
         println("Age: ")
         val age = readln().toInt()
-        UsersInvoker.addCommand {
-            repository.addUser(name, secondName, age)
-        }
+        UsersInvoker.addCommand(AdministratorCommands.AddUser(repository, name, secondName, age))
     }
 
     fun removeUser() {
         println("Enter user id: ")
         val id = readln().toInt()
-        UsersInvoker.addCommand { repository.removeUser(id) }
+        UsersInvoker.addCommand(AdministratorCommands.RemoveUser(repository, id))
     }
 }

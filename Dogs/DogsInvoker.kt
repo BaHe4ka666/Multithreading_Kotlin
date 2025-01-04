@@ -5,10 +5,11 @@ import Command.Invoker
 import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
 
-object DogsInvoker : Invoker {
+object DogsInvoker : Invoker<DogHandlerCommands> {
 
     private val commands = LinkedBlockingQueue<Command>()
-    override fun addCommand(command: Command) {
+
+    override fun addCommand(command: DogHandlerCommands) {
         commands.add(command)
     }
 

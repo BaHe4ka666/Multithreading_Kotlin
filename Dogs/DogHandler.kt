@@ -21,10 +21,9 @@ class DogHandler {
 
             when (code) {
                 TypeOfOperation.EXIT -> {
-                    repository.saveChanges()
+                    DogsInvoker.addCommand(DogHandlerCommands.SaveChanges(repository))
                     break
                 }
-
                 TypeOfOperation.ADD_NEW_DOG -> addNewDog()
                 TypeOfOperation.DELETE_DOG -> removeDog()
             }
@@ -38,16 +37,12 @@ class DogHandler {
         val name = readln()
         println("Weight: ")
         val weight = readln().toDouble()
-        DogsInvoker.addCommand {
-            repository.addDog(breed, name, weight)
-        }
+        DogsInvoker.addCommand(DogHandlerCommands.AddDog(repository, breed, name, weight))
     }
 
     fun removeDog() {
         println("Enter user id: ")
         val id = readln().toInt()
-        DogsInvoker.addCommand {
-            repository.removeDog(id)
-        }
+        DogsInvoker.addCommand(DogHandlerCommands.RemoveDog(repository, id))
     }
 }
